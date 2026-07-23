@@ -204,17 +204,17 @@ voxgig_value* sdk_direct(BluefinDecryptxSDK* sdk, voxgig_value* fetchargs, PNErr
 
 
 // Decrypt entity bound to this client.
-Entity* bluefin_decryptx_decrypt(BluefinDecryptxSDK* client, voxgig_value* entopts) {
+Entity* bluefindecryptx_decrypt(BluefinDecryptxSDK* client, voxgig_value* entopts) {
   return decrypt_entity_new(client, entopts);
 }
 
 // DecryptExt entity bound to this client.
-Entity* bluefin_decryptx_decrypt_ext(BluefinDecryptxSDK* client, voxgig_value* entopts) {
+Entity* bluefindecryptx_decrypt_ext(BluefinDecryptxSDK* client, voxgig_value* entopts) {
   return decrypt_ext_entity_new(client, entopts);
 }
 
 // Validation entity bound to this client.
-Entity* bluefin_decryptx_validation(BluefinDecryptxSDK* client, voxgig_value* entopts) {
+Entity* bluefindecryptx_validation(BluefinDecryptxSDK* client, voxgig_value* entopts) {
   return validation_entity_new(client, entopts);
 }
 

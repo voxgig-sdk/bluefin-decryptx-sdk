@@ -17,7 +17,7 @@ void tests() {
       ok(null != ent);
     });
 
-    test('stream', (t) async {
+test('stream', (t) async {
       // stream() runs the list op through the full pipeline and yields each
       // result item. Seed two entities via test mode; with the `streaming`
       // feature active it yields the feature's incremental items, else it
@@ -57,6 +57,7 @@ void tests() {
       }
       equal(2, seen2.length);
     });
+
 
     test('basic', (t) async {
 

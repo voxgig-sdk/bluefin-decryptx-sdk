@@ -6,7 +6,7 @@ int main(void) {
   BluefinDecryptxSDK* sdk = test_sdk(NULL, NULL);
   CHECK(sdk != NULL, "sdk constructed");
 
-  Entity* e = bluefin_decryptx_decrypt(sdk, NULL);
+  Entity* e = bluefindecryptx_decrypt(sdk, NULL);
   CHECK(e != NULL, "entity instance");
   CHECK_STR_EQ(e->vt->get_name(e), "decrypt", "entity get_name");
 
@@ -24,7 +24,7 @@ int main(void) {
       cmap(1, "streaming", cmap(1, "active", v_bool(true))));
 
     BluefinDecryptxSDK* strsdk = test_sdk(seed, sdkopts);
-    Entity* se = bluefin_decryptx_decrypt(strsdk, NULL);
+    Entity* se = bluefindecryptx_decrypt(strsdk, NULL);
     PNError* serr = NULL;
     voxgig_value* items = decrypt_stream(se, "list", NULL, NULL, &serr);
     CHECK(serr == NULL, "stream: no error");
@@ -33,7 +33,7 @@ int main(void) {
 
     // Fallback: streaming inactive still yields both materialised items.
     BluefinDecryptxSDK* plainsdk = test_sdk(seed, NULL);
-    Entity* pe = bluefin_decryptx_decrypt(plainsdk, NULL);
+    Entity* pe = bluefindecryptx_decrypt(plainsdk, NULL);
     PNError* perr = NULL;
     voxgig_value* pitems = decrypt_stream(pe, "list", NULL, NULL, &perr);
     CHECK(perr == NULL, "stream fallback: no error");

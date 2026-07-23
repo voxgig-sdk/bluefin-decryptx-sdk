@@ -4,7 +4,7 @@
 
 The C SDK for the BluefinDecryptx API — an entity-oriented client following idiomatic C conventions (explicit structs, function-pointer vtables, and a trailing `PNError**` out-param for errors).
 
-The SDK exposes the API as capitalised, semantic **Entities** — for example `bluefin_decryptx_decrypt(client, NULL)` — each
+The SDK exposes the API as capitalised, semantic **Entities** — for example `bluefindecryptx_decrypt(client, NULL)` — each
 carrying a small, uniform set of operations (`list`, `create`) instead of raw URL
 paths and query strings. You work with named resources and verbs, which
 keeps the cognitive load low.
@@ -43,7 +43,7 @@ loading a specific record.
 ```c
 #include "core/api.h"
 
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(1,
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(cmap(1,
     "apikey", v_str(getenv("BLUEFIN_DECRYPTX_APIKEY"))));
 PNError* err = NULL;
 ```
@@ -54,7 +54,7 @@ PNError* err = NULL;
 `err` after the call.
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* decrypts = decrypt->vt->list(decrypt, NULL, NULL, &err);
 if (err) {
     fprintf(stderr, "list failed: %s\n", err->msg);
@@ -152,7 +152,7 @@ BluefinDecryptxSDK* client = test_sdk(NULL, NULL);
 PNError* err = NULL;
 
 // Entity ops return the bare record and set *err on failure.
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* decrypt_rec = decrypt->vt->list(decrypt, NULL, NULL, &err);
 // decrypt_rec contains the mock response record
 ```
@@ -172,7 +172,7 @@ static voxgig_value* mock_fetch(void* ud, voxgig_value* args) {
         "json", json_thunk(cmap(1, "id", v_str("mock01"))));
 }
 
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(2,
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(cmap(2,
     "base", v_str("http://localhost:8080"),
     "system", cmap(1, "fetch", vfn(mock_fetch, NULL))));
 ```
@@ -182,7 +182,7 @@ BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(2,
 Override the base URL to reach a local or staging server:
 
 ```c
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(1,
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(cmap(1,
     "base", v_str("http://localhost:8080")));
 ```
 
@@ -209,7 +209,7 @@ cd c && make test
 ```c
 #include "core/api.h"
 
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(options);
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(options);
 ```
 
 Creates a new SDK client. `options` is a `voxgig_value*` map (`NULL` for
@@ -239,9 +239,9 @@ Creates a test-mode client with mock transport. Both arguments may be
 | --- | --- | --- |
 | `sdk_prepare` | `(BluefinDecryptxSDK*, fetchargs, PNError**) -> voxgig_value*` | Build an HTTP request definition without sending. |
 | `sdk_direct` | `(BluefinDecryptxSDK*, fetchargs, PNError**) -> voxgig_value*` | Build and send an HTTP request. Returns a result map (branch on `ok`). |
-| `bluefin_decryptx_decrypt` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a Decrypt entity instance. |
-| `bluefin_decryptx_decrypt_ext` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a DecryptExt entity instance. |
-| `bluefin_decryptx_validation` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a Validation entity instance. |
+| `bluefindecryptx_decrypt` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a Decrypt entity instance. |
+| `bluefindecryptx_decrypt_ext` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a DecryptExt entity instance. |
+| `bluefindecryptx_validation` | `(BluefinDecryptxSDK*, entopts) -> Entity*` | Create a Validation entity instance. |
 
 ### Entity interface (vtable)
 
@@ -347,7 +347,7 @@ API path: `/device/validate`
 
 ### Decrypt
 
-Create an instance: `Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);`
+Create an instance: `Entity* decrypt = bluefindecryptx_decrypt(client, NULL);`
 
 #### Operations
 
@@ -381,14 +381,14 @@ Create an instance: `Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);`
 #### Example: List
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* decrypts = decrypt->vt->list(decrypt, NULL, NULL, &err);
 ```
 
 #### Example: Create
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* decrypt_rec = decrypt->vt->create(decrypt, cmap(8,
     "decryption_parameter", v_map(),  // voxgig_value* (map)
     "encrypted", v_list(),  // voxgig_value* (list)
@@ -404,7 +404,7 @@ voxgig_value* decrypt_rec = decrypt->vt->create(decrypt, cmap(8,
 
 ### DecryptExt
 
-Create an instance: `Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, NULL);`
+Create an instance: `Entity* decrypt_ext = bluefindecryptx_decrypt_ext(client, NULL);`
 
 #### Operations
 
@@ -431,7 +431,7 @@ Create an instance: `Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, 
 #### Example: Create
 
 ```c
-Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, NULL);
+Entity* decrypt_ext = bluefindecryptx_decrypt_ext(client, NULL);
 voxgig_value* decrypt_ext_rec = decrypt_ext->vt->create(decrypt_ext, cmap(3,
     "encrypted", v_num(1),  // double
     "partner_id", v_str("example_partner_id"),  // char*
@@ -442,7 +442,7 @@ voxgig_value* decrypt_ext_rec = decrypt_ext->vt->create(decrypt_ext, cmap(3,
 
 ### Validation
 
-Create an instance: `Entity* validation = bluefin_decryptx_validation(client, NULL);`
+Create an instance: `Entity* validation = bluefindecryptx_validation(client, NULL);`
 
 #### Operations
 
@@ -466,7 +466,7 @@ Create an instance: `Entity* validation = bluefin_decryptx_validation(client, NU
 #### Example: Create
 
 ```c
-Entity* validation = bluefin_decryptx_validation(client, NULL);
+Entity* validation = bluefindecryptx_validation(client, NULL);
 voxgig_value* validation_rec = validation->vt->create(validation, cmap(4,
     "message_id", v_str("example_message_id"),  // char*
     "reference", v_str("example_reference"),  // char*

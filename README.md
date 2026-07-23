@@ -93,7 +93,7 @@ local results, err = client:Decrypt():list()
 
 BluefinDecryptxSDK* client = test_sdk(NULL, NULL);
 PNError* err = NULL;
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* decrypts = decrypt->vt->list(decrypt, NULL, NULL, &err);
 printf("%s\n", voxgig_to_json(decrypts));
 ```
@@ -426,11 +426,11 @@ print(decrypts)
 ```c
 #include "core/api.h"
 
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(1,
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(cmap(1,
     "apikey", v_str(getenv("BLUEFIN_DECRYPTX_APIKEY"))));
 PNError* err = NULL;
 
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 
 // List all decrypts (returns a List, sets *err on failure)
 voxgig_value* decrypts = decrypt->vt->list(decrypt, NULL, NULL, &err);

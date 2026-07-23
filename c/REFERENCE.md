@@ -10,7 +10,7 @@ Complete API reference for the BluefinDecryptx C SDK.
 ```c
 #include "core/api.h"
 
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(options);
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(options);
 ```
 
 Create a new SDK client instance. `options` is a `voxgig_value*` map
@@ -43,17 +43,17 @@ BluefinDecryptxSDK* client = test_sdk(NULL, NULL);
 
 ### Entity Accessors
 
-#### `Entity* bluefin_decryptx_decrypt(BluefinDecryptxSDK* client, voxgig_value* entopts)`
+#### `Entity* bluefindecryptx_decrypt(BluefinDecryptxSDK* client, voxgig_value* entopts)`
 
 Create a new `Decrypt` entity instance. Pass `NULL` for no initial
 options.
 
-#### `Entity* bluefin_decryptx_decrypt_ext(BluefinDecryptxSDK* client, voxgig_value* entopts)`
+#### `Entity* bluefindecryptx_decrypt_ext(BluefinDecryptxSDK* client, voxgig_value* entopts)`
 
 Create a new `DecryptExt` entity instance. Pass `NULL` for no initial
 options.
 
-#### `Entity* bluefin_decryptx_validation(BluefinDecryptxSDK* client, voxgig_value* entopts)`
+#### `Entity* bluefindecryptx_validation(BluefinDecryptxSDK* client, voxgig_value* entopts)`
 
 Create a new `Validation` entity instance. Pass `NULL` for no initial
 options.
@@ -87,7 +87,7 @@ Prepare a fetch definition without sending. Returns the fetchdef and sets
 ## Decrypt
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 ```
 
 ### Fields
@@ -141,7 +141,7 @@ Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
 Create a new entity with the given data. Returns the created entity data and sets `*err` on failure.
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* result = decrypt->vt->create(decrypt, cmap(8,
     "decryption_parameter", v_map(),  // voxgig_value* (map)
     "encrypted", v_list(),  // voxgig_value* (list)
@@ -159,7 +159,7 @@ voxgig_value* result = decrypt->vt->create(decrypt, cmap(8,
 List entities matching the given criteria. The match is optional — pass `NULL` to list all records. Returns a List.
 
 ```c
-Entity* decrypt = bluefin_decryptx_decrypt(client, NULL);
+Entity* decrypt = bluefindecryptx_decrypt(client, NULL);
 voxgig_value* results = decrypt->vt->list(decrypt, NULL, NULL, &err);
 for (size_t i = 0; i < (size_t)voxgig_size(results); i++) {
     printf("%s\n", voxgig_to_json(voxgig_getelem(results, v_int(i), NULL)));
@@ -190,7 +190,7 @@ Return the entity name.
 ## DecryptExt
 
 ```c
-Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, NULL);
+Entity* decrypt_ext = bluefindecryptx_decrypt_ext(client, NULL);
 ```
 
 ### Fields
@@ -232,7 +232,7 @@ Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, NULL);
 Create a new entity with the given data. Returns the created entity data and sets `*err` on failure.
 
 ```c
-Entity* decrypt_ext = bluefin_decryptx_decrypt_ext(client, NULL);
+Entity* decrypt_ext = bluefindecryptx_decrypt_ext(client, NULL);
 voxgig_value* result = decrypt_ext->vt->create(decrypt_ext, cmap(3,
     "encrypted", v_num(1),  // double
     "partner_id", v_str("example_partner_id"),  // char*
@@ -264,7 +264,7 @@ Return the entity name.
 ## Validation
 
 ```c
-Entity* validation = bluefin_decryptx_validation(client, NULL);
+Entity* validation = bluefindecryptx_validation(client, NULL);
 ```
 
 ### Fields
@@ -300,7 +300,7 @@ Entity* validation = bluefin_decryptx_validation(client, NULL);
 Create a new entity with the given data. Returns the created entity data and sets `*err` on failure.
 
 ```c
-Entity* validation = bluefin_decryptx_validation(client, NULL);
+Entity* validation = bluefindecryptx_validation(client, NULL);
 voxgig_value* result = validation->vt->create(validation, cmap(4,
     "message_id", v_str("example_message_id"),  // char*
     "reference", v_str("example_reference"),  // char*
@@ -340,7 +340,7 @@ Return the entity name.
 Features are activated via the `feature` option:
 
 ```c
-BluefinDecryptxSDK* client = bluefin_decryptx_sdk_new(cmap(1,
+BluefinDecryptxSDK* client = bluefindecryptx_sdk_new(cmap(1,
     "feature", cmap(1,
         "test", cmap(1, "active", v_bool(true)))
 ));

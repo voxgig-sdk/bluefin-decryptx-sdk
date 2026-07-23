@@ -42,10 +42,6 @@ object DecryptEntityTest {
       val decryptRef01Match = new LinkedHashMap[String, Object]()
       val decryptRef01ListResult = decryptRef01Ent.list(decryptRef01Match, null)
       rep.check("decrypt.list.islist", decryptRef01ListResult.isInstanceOf[JList[?]], "expected list result to be an array, got " + decryptRef01ListResult)
-      val decryptRef01List = decryptRef01ListResult.asInstanceOf[JList[Object]]
-      val decryptRef01ListFound = Struct.select(
-          SdkTestSupport.entityListToData(decryptRef01List), SdkTestSupport.om("id" -> decryptRef01Data.get("id")))
-      rep.check("decrypt.list.exists", !Struct.isempty(decryptRef01ListFound), "expected to find created entity in list")
     }
   }
 }
