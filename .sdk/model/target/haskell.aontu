@@ -1,0 +1,50 @@
+
+main: kit: target: haskell: {
+
+  title: Haskell
+  ext: hs
+  comment: line: "--"
+  module: name: 'bluefin-decryptx'
+  srcfeature: false
+
+  # Entities are generic (config-driven F.makeEntity), so no per-entity or
+  # per-feature generated modules. The readme + agentguide phases are
+  # model-driven (they read the API model directly, not per-entity generated
+  # code), so they are active and produce the docs; entity/feature generation
+  # stays off.
+  phase: {
+    entity:     { active: false }
+    feature:    { active: false }
+    readme:     { active: true }
+    agentguide: { active: true }
+    test:       { active: true }
+  }
+
+  deps: &: {
+    kind: *'prod' | string
+  }
+
+  # struct is vendored under src/ (VoxgigStruct.hs + Vregex.hs) — the runtime
+  # is dependency-free: it compiles with the stock ghc (base + containers, the
+  # GHC boot libraries), no cabal packages, no stack. So there are no manifest
+  # dependencies.
+  deps: {}
+}
+
+
+main: kit: feature: &: target: haskell: deps: &: {
+  kind: *'prod' | string
+}
+
+
+# Publication: Hackage registry (declared, publish pending — git-tag only).
+main: kit: target: haskell: publish: {
+  tag: { active: true }
+  registry: {
+    state: 'pending'
+    active: false
+    name: 'hackage'
+    url: 'https://hackage.haskell.org'
+    vault: { alias: 'hackage', env: 'HACKAGE_TOKEN' }
+  }
+}

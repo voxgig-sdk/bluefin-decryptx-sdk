@@ -8,14 +8,30 @@
 # stored on disk or passed on the command line.
 #
 # Publication state (from the model):
+#   c        none (publish pending: deploy publishes the git tag only)
+#   clojure  clojars (publish pending: deploy publishes the git tag only) https://clojars.org
+#   cpp      none (publish pending: deploy publishes the git tag only)
+#   csharp   nuget (publish pending: deploy publishes the git tag only) https://www.nuget.org
+#   dart     pub.dev (publish pending: deploy publishes the git tag only) https://pub.dev
+#   elixir   hex (publish pending: deploy publishes the git tag only) https://hex.pm
 #   go       tag-only
 #   go-cli   tag-only
 #   go-mcp   tag-only
+#   haskell  hackage (publish pending: deploy publishes the git tag only) https://hackage.haskell.org
+#   java     maven-central (publish pending: deploy publishes the git tag only) https://central.sonatype.com
+#   js       npm (publish pending: deploy publishes the git tag only) https://registry.npmjs.org
+#   kotlin   maven-central (publish pending: deploy publishes the git tag only) https://central.sonatype.com
 #   lua      luarocks (publish pending: deploy publishes the git tag only) https://luarocks.org
+#   ocaml    opam (publish pending: deploy publishes the git tag only) https://opam.ocaml.org
+#   perl     cpan (publish pending: deploy publishes the git tag only) https://www.cpan.org
 #   php      packagist (publish pending: deploy publishes the git tag only) https://packagist.org
 #   py       pypi (publish pending: deploy publishes the git tag only) https://pypi.org
 #   rb       rubygems (publish pending: deploy publishes the git tag only) https://rubygems.org
+#   rust     crates.io (publish pending: deploy publishes the git tag only) https://crates.io
+#   scala    maven-central (publish pending: deploy publishes the git tag only) https://central.sonatype.com
+#   swift    swiftpm (publish pending: deploy publishes the git tag only) https://swift.org/package-manager
 #   ts       npm (publish pending: deploy publishes the git tag only) https://registry.npmjs.org
+#   zig      none (publish pending: deploy publishes the git tag only)
 #
 #   make deploy               list per-target deploy commands
 #   make deploy-<target>      deploy ONE target (no deploy-all: each
@@ -32,17 +48,28 @@
 SHELL := /bin/bash
 
 GITHUB_ALIAS ?= github
+NONE_ALIAS ?= none
+CLOJARS_ALIAS ?= clojars
+NUGET_ALIAS ?= nuget
+PUB_DEV_ALIAS ?= pubdev
+HEX_ALIAS ?= hex
+HACKAGE_ALIAS ?= hackage
+MAVEN_CENTRAL_ALIAS ?= central
+NPM_ALIAS ?= npm
 LUAROCKS_ALIAS ?= luarocks
+OPAM_ALIAS ?= opam
+CPAN_ALIAS ?= cpan
 PACKAGIST_ALIAS ?= packagist
 PYPI_ALIAS ?= pypi
 RUBYGEMS_ALIAS ?= gem
-NPM_ALIAS ?= npm
+CRATES_IO_ALIAS ?= cratesio
+SWIFTPM_ALIAS ?= swiftpm
 
 # Lockstep SDK version, read from the canonical ts manifest.
 VERSION := $(shell node -p "require('./ts/package.json').version" 2>/dev/null || echo 0.0.0)
 AQL_DRY_RUN_FILLER := AQL-DRY-RUN-FILLER-NOT-A-REAL-SECRET
 
-TARGETS := go go-cli go-mcp lua php py rb ts
+TARGETS := c clojure cpp csharp dart elixir go go-cli go-mcp haskell java js kotlin lua ocaml perl php py rb rust scala swift ts zig
 
 .PHONY: deploy deploy-dry \
   $(addprefix deploy-,$(TARGETS)) $(addprefix deploy-dry-,$(TARGETS)) \
@@ -52,18 +79,160 @@ deploy:
 	@echo "Deployment is per-target — pick one (each upload is irreversible):"
 	@echo "  make deploy-<target>    targets: $(TARGETS)"
 	@echo "Registry state is set in the model (.sdk/model/target/<t>.aontu):"
+	@echo "  deploy-c        none publish pending (deploy = git tag only)"
+	@echo "  deploy-clojure  clojars publish pending (deploy = git tag only)"
+	@echo "  deploy-cpp      none publish pending (deploy = git tag only)"
+	@echo "  deploy-csharp   nuget publish pending (deploy = git tag only)"
+	@echo "  deploy-dart     pub.dev publish pending (deploy = git tag only)"
+	@echo "  deploy-elixir   hex publish pending (deploy = git tag only)"
 	@echo "  deploy-go       tag-only"
 	@echo "  deploy-go-cli   tag-only"
 	@echo "  deploy-go-mcp   tag-only"
+	@echo "  deploy-haskell  hackage publish pending (deploy = git tag only)"
+	@echo "  deploy-java     maven-central publish pending (deploy = git tag only)"
+	@echo "  deploy-js       npm publish pending (deploy = git tag only)"
+	@echo "  deploy-kotlin   maven-central publish pending (deploy = git tag only)"
 	@echo "  deploy-lua      luarocks publish pending (deploy = git tag only)"
+	@echo "  deploy-ocaml    opam publish pending (deploy = git tag only)"
+	@echo "  deploy-perl     cpan publish pending (deploy = git tag only)"
 	@echo "  deploy-php      packagist publish pending (deploy = git tag only)"
 	@echo "  deploy-py       pypi publish pending (deploy = git tag only)"
 	@echo "  deploy-rb       rubygems publish pending (deploy = git tag only)"
+	@echo "  deploy-rust     crates.io publish pending (deploy = git tag only)"
+	@echo "  deploy-scala    maven-central publish pending (deploy = git tag only)"
+	@echo "  deploy-swift    swiftpm publish pending (deploy = git tag only)"
 	@echo "  deploy-ts       npm publish pending (deploy = git tag only)"
+	@echo "  deploy-zig      none publish pending (deploy = git tag only)"
 	@echo "Rehearse everything safely first: make deploy-dry"
 
 deploy-dry: $(addprefix deploy-dry-,$(TARGETS))
 	@echo "deploy-dry: all targets rehearsed OK ($(TARGETS))"
+
+deploy-c:
+	@echo "deploy-c: none publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-c
+
+deploy-dry-c:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-c
+
+tag-push-c:
+	@set -e; tag="c/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-c: no GITHUB_TOKEN in env — run via make deploy-c (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (none publication pending — tag-only deploy)"
+
+deploy-clojure:
+	@echo "deploy-clojure: clojars publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-clojure
+
+deploy-dry-clojure:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-clojure
+
+tag-push-clojure:
+	@set -e; tag="clojure/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-clojure: no GITHUB_TOKEN in env — run via make deploy-clojure (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (clojars publication pending — tag-only deploy)"
+
+deploy-cpp:
+	@echo "deploy-cpp: none publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-cpp
+
+deploy-dry-cpp:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-cpp
+
+tag-push-cpp:
+	@set -e; tag="cpp/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-cpp: no GITHUB_TOKEN in env — run via make deploy-cpp (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (none publication pending — tag-only deploy)"
+
+deploy-csharp:
+	@echo "deploy-csharp: nuget publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-csharp
+
+deploy-dry-csharp:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-csharp
+
+tag-push-csharp:
+	@set -e; tag="csharp/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-csharp: no GITHUB_TOKEN in env — run via make deploy-csharp (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (nuget publication pending — tag-only deploy)"
+
+deploy-dart:
+	@echo "deploy-dart: pub.dev publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-dart
+
+deploy-dry-dart:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-dart
+
+tag-push-dart:
+	@set -e; tag="dart/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-dart: no GITHUB_TOKEN in env — run via make deploy-dart (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (pub.dev publication pending — tag-only deploy)"
+
+deploy-elixir:
+	@echo "deploy-elixir: hex publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-elixir
+
+deploy-dry-elixir:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-elixir
+
+tag-push-elixir:
+	@set -e; tag="elixir/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-elixir: no GITHUB_TOKEN in env — run via make deploy-elixir (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (hex publication pending — tag-only deploy)"
 
 deploy-go:
 	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) -C go publish
@@ -113,6 +282,90 @@ tag-push-go-mcp:
 	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
 	echo "pushed $$tag (tag-only port)"
 
+deploy-haskell:
+	@echo "deploy-haskell: hackage publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-haskell
+
+deploy-dry-haskell:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-haskell
+
+tag-push-haskell:
+	@set -e; tag="haskell/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-haskell: no GITHUB_TOKEN in env — run via make deploy-haskell (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (hackage publication pending — tag-only deploy)"
+
+deploy-java:
+	@echo "deploy-java: maven-central publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-java
+
+deploy-dry-java:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-java
+
+tag-push-java:
+	@set -e; tag="java/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-java: no GITHUB_TOKEN in env — run via make deploy-java (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (maven-central publication pending — tag-only deploy)"
+
+deploy-js:
+	@echo "deploy-js: npm publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-js
+
+deploy-dry-js:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-js
+
+tag-push-js:
+	@set -e; tag="js/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-js: no GITHUB_TOKEN in env — run via make deploy-js (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (npm publication pending — tag-only deploy)"
+
+deploy-kotlin:
+	@echo "deploy-kotlin: maven-central publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-kotlin
+
+deploy-dry-kotlin:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-kotlin
+
+tag-push-kotlin:
+	@set -e; tag="kotlin/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-kotlin: no GITHUB_TOKEN in env — run via make deploy-kotlin (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (maven-central publication pending — tag-only deploy)"
+
 deploy-lua:
 	@echo "deploy-lua: luarocks publication is pending — publishing the git tag only."
 	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-lua
@@ -133,6 +386,48 @@ tag-push-lua:
 	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
 	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
 	echo "pushed $$tag (luarocks publication pending — tag-only deploy)"
+
+deploy-ocaml:
+	@echo "deploy-ocaml: opam publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-ocaml
+
+deploy-dry-ocaml:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-ocaml
+
+tag-push-ocaml:
+	@set -e; tag="ocaml/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-ocaml: no GITHUB_TOKEN in env — run via make deploy-ocaml (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (opam publication pending — tag-only deploy)"
+
+deploy-perl:
+	@echo "deploy-perl: cpan publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-perl
+
+deploy-dry-perl:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-perl
+
+tag-push-perl:
+	@set -e; tag="perl/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-perl: no GITHUB_TOKEN in env — run via make deploy-perl (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (cpan publication pending — tag-only deploy)"
 
 deploy-php:
 	@echo "deploy-php: packagist publication is pending — publishing the git tag only."
@@ -197,6 +492,69 @@ tag-push-rb:
 	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
 	echo "pushed $$tag (rubygems publication pending — tag-only deploy)"
 
+deploy-rust:
+	@echo "deploy-rust: crates.io publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-rust
+
+deploy-dry-rust:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-rust
+
+tag-push-rust:
+	@set -e; tag="rust/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-rust: no GITHUB_TOKEN in env — run via make deploy-rust (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (crates.io publication pending — tag-only deploy)"
+
+deploy-scala:
+	@echo "deploy-scala: maven-central publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-scala
+
+deploy-dry-scala:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-scala
+
+tag-push-scala:
+	@set -e; tag="scala/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-scala: no GITHUB_TOKEN in env — run via make deploy-scala (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (maven-central publication pending — tag-only deploy)"
+
+deploy-swift:
+	@echo "deploy-swift: swiftpm publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-swift
+
+deploy-dry-swift:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-swift
+
+tag-push-swift:
+	@set -e; tag="swift/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-swift: no GITHUB_TOKEN in env — run via make deploy-swift (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (swiftpm publication pending — tag-only deploy)"
+
 deploy-ts:
 	@echo "deploy-ts: npm publication is pending — publishing the git tag only."
 	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-ts
@@ -217,3 +575,24 @@ tag-push-ts:
 	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
 	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
 	echo "pushed $$tag (npm publication pending — tag-only deploy)"
+
+deploy-zig:
+	@echo "deploy-zig: none publication is pending — publishing the git tag only."
+	aql vault exec --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-zig
+
+deploy-dry-zig:
+	aql vault exec --dry-run --for=github=$(GITHUB_ALIAS) -- $(MAKE) tag-push-zig
+
+tag-push-zig:
+	@set -e; tag="zig/v$(VERSION)"; \
+	token="$${GITHUB_TOKEN:-$$GH_TOKEN}"; \
+	if [ "$$token" = "$(AQL_DRY_RUN_FILLER)" ]; then \
+	  echo "[dry-run] aql filler token detected: would create (if missing) and push tag $$tag; nothing pushed."; exit 0; fi; \
+	if [ -z "$$token" ]; then echo "tag-push-zig: no GITHUB_TOKEN in env — run via make deploy-zig (aql vault exec)"; exit 1; fi; \
+	if git rev-parse -q --verify "refs/tags/$$tag" >/dev/null; then \
+	  echo "tag $$tag already exists — pushing existing tag"; \
+	else git tag -a "$$tag" -m "Release $$tag"; fi; \
+	url=$$(git remote get-url origin | sed -E 's#^git@github.com:#https://github.com/#'); \
+	hdr="AUTHORIZATION: basic $$(printf 'x-access-token:%s' "$$token" | base64 | tr -d '\n')"; \
+	git -c http.extraheader="$$hdr" push "$$url" "$$tag"; \
+	echo "pushed $$tag (none publication pending — tag-only deploy)"

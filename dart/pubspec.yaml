@@ -1,0 +1,15 @@
+name: bluefin_decryptx_sdk
+description: >-
+  Unofficial generated dart SDK for the Decryptx APIs public API. Not affiliated with or endorsed by the upstream API provider.
+version: 0.0.1
+homepage: https://github.com/voxgig-sdk/bluefin-decryptx-sdk
+repository: https://github.com/voxgig-sdk/bluefin-decryptx-sdk
+issue_tracker: https://github.com/voxgig-sdk/bluefin-decryptx-sdk/issues
+topics:
+  - voxgig
+  - sdk
+  - generated-sdk
+  - openapi
+  - api-client
+environment:
+  sdk: '>=3.0.0 <4.0.0'
