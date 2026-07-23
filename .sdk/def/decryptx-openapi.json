@@ -1,0 +1,905 @@
+{
+ "openapi": "3.0.1",
+ "info": {
+  "title": "Decryptx APIs",
+  "description": "This page describes the Bluefin Partner Application Programming Interface (API) for the Decryptx service. This service allows partners to decrypt PCI-validated Point-To-Point Encryption (P2PE) card information.\n\n<strong>IP Address Whitelist</strong><br/>\nAt Bluefin, we protect our REST endpoints with a IP address whitelist. If you would like to try the examples below please <a href=\"https://www.bluefin.com/contact/\">contact us</a> to request access.\n\n# Authentication\nAll API calls to the Decryptx APIs require authentication; our endpoints support Transparent, Basic, Digest, HMAC, and RSA authentication methods. To explore our authentication methods check out our Authentication documentation.\n",
+  "contact": {
+   "name": "support@bluefin.com"
+  },
+  "license": {
+   "name": "Bluefin Software Licence"
+  },
+  "version": "1.3.0"
+ },
+ "servers": [
+  {
+   "url": "https://secure-prod.decryptx.com/api",
+   "description": "Production"
+  },
+  {
+   "url": "https://secure-cert.decryptx.com/api",
+   "description": "Certification"
+  }
+ ],
+ "tags": [
+  {
+   "name": "Decryptx",
+   "description": "The Decryptx APIs allow you to decrypt P2PE encrypted data. There are also API Endpoints that allow you to validate that your Partner account and Devices have been set up and enabled on the Decryptx Service."
+  }
+ ],
+ "paths": {
+  "/partner/validate": {
+   "post": {
+    "tags": [
+     "Validate"
+    ],
+    "summary": "Validate a Partner",
+    "description": "This endpoint allows a partner to validate their credentials.\n",
+    "operationId": "validatePartner",
+    "requestBody": {
+     "description": "Partner Details; includes partnerId, partnerKey and an optional User Defined Reference.",
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/PartnerParam"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Response Object",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ValidationResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     }
+    },
+    "security": [
+     {
+      "ApiKeyAuth": []
+     }
+    ],
+    "x-codegen-request-body-name": "PartnerParam"
+   }
+  },
+  "/device/validate": {
+   "post": {
+    "tags": [
+     "Validate"
+    ],
+    "summary": "Validate a Device",
+    "description": "This endpoint allows a partner to validate that a device is correctly registered on Decryptx and that it is functional.\n",
+    "operationId": "validateDevice",
+    "requestBody": {
+     "description": "Device Details.",
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DeviceParam"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Response Object",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ValidationResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     }
+    },
+    "x-codegen-request-body-name": "DeviceParam"
+   }
+  },
+  "/decrypt": {
+   "post": {
+    "tags": [
+     "Decrypt"
+    ],
+    "summary": "Decrypt P2PE data",
+    "description": "This allows a partner to decrypt P2PE data from a device. Up to 100 values can be decrypted in a single call. However, it should be noted that a response will only be returned once all values are decrypted and all values to decrypt must belong to a single device. In JSON, the encrypted property contains an array of objects with name/value properties indicating the values that are to be decrypted. The response will contain an array with the same names in the same order they were submitted and their corresponding decrypted values or individual error information if the data could not be decrypted. If at least one of the values can be decrypted, the overall response will indicate a success, but an error code and message will be provided where there are failures. The API response will only indicate a failure when all decryptions fail.\n",
+    "operationId": "decrypt",
+    "requestBody": {
+     "description": "P2PE Data Details.",
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DecryptParam"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Response Object",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     },
+     "409": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "DecryptxError",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptxError"
+        }
+       }
+      }
+     }
+    },
+    "x-codegen-request-body-name": "DecryptParam"
+   }
+  },
+  "/decrypt-ext": {
+   "post": {
+    "tags": [
+     "Decrypt"
+    ],
+    "summary": "Decrypt External Data",
+    "description": "Provides the ability store external decryption data.",
+    "operationId": "decrypt-external",
+    "requestBody": {
+     "description": "Data to be decrypted.",
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/DecryptExternalRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Decryption External response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptExternalResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "Bad request",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "Unauthorized",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "Forbidden",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "409": {
+      "description": "Invalid data",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "Internal server error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     }
+    },
+    "x-codegen-request-body-name": "data"
+   }
+  },
+  "/healthcheck": {
+   "get": {
+    "tags": [
+     "Healthcheck"
+    ],
+    "summary": "Healthcheck method",
+    "description": "Healthcheck method",
+    "operationId": "healthcheck",
+    "parameters": [
+     {
+      "name": "partnerId",
+      "in": "query",
+      "description": "partnerId",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "partnerKey",
+      "in": "query",
+      "description": "partnerKey",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "serial",
+      "in": "query",
+      "description": "serial",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "reference",
+      "in": "query",
+      "description": "reference",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "clientId",
+      "in": "query",
+      "description": "clientId",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "encryptedName",
+      "in": "query",
+      "description": "encryptedName",
+      "schema": {
+       "type": "string",
+       "default": "param 1"
+      }
+     },
+     {
+      "name": "encryptedValue",
+      "in": "query",
+      "description": "encryptedValue",
+      "schema": {
+       "type": "string",
+       "default": "nlj/tULUuiMlM3io0JZ+9jFBTKH7KCPwVg7PFjvWUMzMa7XE/QbegA=="
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Decryption response",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptResponse"
+        }
+       }
+      }
+     },
+     "400": {
+      "description": "Bad request",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "401": {
+      "description": "Unauthorized",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "403": {
+      "description": "Forbidden",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     },
+     "409": {
+      "description": "Conflict Error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/DecryptResponse"
+        }
+       }
+      }
+     },
+     "500": {
+      "description": "Internal server error",
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ErrorResponse"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "PartnerParam": {
+    "type": "object",
+    "properties": {
+     "partnerId": {
+      "type": "string",
+      "description": "ID provided by Bluefin for access to the Decryptx API.",
+      "example": "WATERFORD"
+     },
+     "partnerKey": {
+      "type": "string",
+      "description": "API Key provided by Bluefin for access to the Decryptx API. This value can be changed on request from the partner or by the partner via the Decryptx portal.",
+      "example": "ef1ad938150fb15a1384b883a104ce70"
+     },
+     "reference": {
+      "type": "string",
+      "description": "A string (of up to 50 characters) that helps partners identify individual API calls. If provided, the value will be logged to the P2PE Manager where it can be used to troubleshoot technical issues. It is highly recommended that a unique value be used on each Decryptx API call. The reference value will be returned in the response body, whether the API call is successful or not.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     }
+    }
+   },
+   "ValidationResponse": {
+    "required": [
+     "messageId",
+     "reference",
+     "success"
+    ],
+    "type": "object",
+    "properties": {
+     "success": {
+      "type": "boolean",
+      "description": "Indicates if validation was successful or not."
+     },
+     "reference": {
+      "type": "string",
+      "description": "A string (of up to 50 characters) that helps partners identify individual API calls. If provided, the value will be logged to the P2PE Manager where it can be used to troubleshoot technical issues. It is highly recommended that a unique value be used on each Decryptx API call. The reference value will be returned in the response body, whether the API call is successful or not.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     },
+     "messageId": {
+      "type": "string",
+      "description": "Bluefin assigned unique identifier for each response from the Decryptx API. This can and should be stored for troubleshooting purposes. This will be 25 numeric characters.",
+      "example": "1201607010023571033712211"
+     }
+    }
+   },
+   "DeviceParam": {
+    "required": [
+     "serial"
+    ],
+    "type": "object",
+    "properties": {
+     "partnerId": {
+      "type": "string",
+      "description": "ID provided by Bluefin for access to the Decryptx API.",
+      "example": "WATERFORD"
+     },
+     "partnerKey": {
+      "type": "string",
+      "description": "API Key provided by Bluefin for access to the Decryptx API. This value can be changed on request from the partner or by the partner via the Decryptx portal.",
+      "example": "ef1ad938150fb15a1384b883a104ce70"
+     },
+     "reference": {
+      "type": "string",
+      "description": "A string (of up to 50 characters) that helps partners identify individual API calls. If provided, the value will be logged to the P2PE Manager where it can be used to troubleshoot technical issues. It is highly recommended that a unique value be used on each Decryptx API call. The reference value will be returned in the response body, whether the API call is successful or not.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     },
+     "serial": {
+      "type": "string",
+      "description": "The serial number of the device.",
+      "example": "541T112708"
+     },
+     "firmware": {
+      "type": "string",
+      "description": "The firmware version of the device as captured from the read.",
+      "example": "1.12.02"
+     },
+     "clientId": {
+      "type": "string",
+      "description": "Identifier for partner client to which this device belongs. This value is configured by the partner when the device is provisioned and is optional. This parameter provides an additional level of uniqueness in case device serial numbers are not unique between manufacturers. It also provides a more detailed level of reporting as API usage can be reported to the Client level. All devices provisioned for a partner must have a unique combination of Serial Number and Client. If a partner does not wish to use a client identifier, all devices provisioned for that partner must have a unique Serial Number.",
+      "example": "bobs_burgers"
+     }
+    }
+   },
+   "DecryptParam": {
+    "required": [
+     "decryptionParameters",
+     "encrypted",
+     "hasCcData",
+     "serial"
+    ],
+    "type": "object",
+    "properties": {
+     "partnerId": {
+      "type": "string",
+      "description": "ID provided by Bluefin for access to the Decryptx API.",
+      "example": "WATERFORD"
+     },
+     "partnerKey": {
+      "type": "string",
+      "description": "API Key provided by Bluefin for access to the Decryptx API. This value can be changed on request from the partner or by the partner via the Decryptx portal.",
+      "example": "ef1ad938150fb15a1384b883a104ce70"
+     },
+     "reference": {
+      "type": "string",
+      "description": "A string (of up to 50 characters) that helps partners identify individual API calls. If provided, the value will be logged to the P2PE Manager where it can be used to troubleshoot technical issues. It is highly recommended that a unique value be used on each Decryptx API call. The reference value will be returned in the response body, whether the API call is successful or not.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     },
+     "serial": {
+      "type": "string",
+      "description": "The serial number of the device.",
+      "example": "541T112708"
+     },
+     "firmware": {
+      "type": "string",
+      "description": "The firmware version of the device as captured from the read.",
+      "example": "1.12.02"
+     },
+     "clientId": {
+      "type": "string",
+      "description": "Identifier for partner client to which this device belongs. This value is configured by the partner when the device is provisioned and is optional. This parameter provides an additional level of uniqueness in case device serial numbers are not unique between manufacturers. It also provides a more detailed level of reporting as API usage can be reported to the Client level. All devices provisioned for a partner must have a unique combination of Serial Number and Client. If a partner does not wish to use a client identifier, all devices provisioned for that partner must have a unique Serial Number.",
+      "example": "bobs_burgers"
+     },
+     "hasCcData": {
+      "type": "string",
+      "description": "Validation flag that indicates whether inbound and outbound data should be checked for credit card numbers. If hasCcData is set to \"1\" and the inbound data contains a credit card number or if the outbound data does not contain credit card number the decrypt operation will fail. If hasCcData is set to \"0\", no checks will be performed on inbound and outbound data. If no value for hasCcData flag provided, Decryptx defaults it to \"1\".",
+      "default": "1",
+      "enum": [
+       "1",
+       "0"
+      ]
+     },
+     "decryptionParameters": {
+      "$ref": "#/components/schemas/DecryptionParameters"
+     },
+     "encrypted": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Encrypted"
+      }
+     }
+    }
+   },
+   "Encrypted": {
+    "required": [
+     "name",
+     "value"
+    ],
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "String identifier for the value to be decrypted. This name will be returned in the response so that values can be matched up. Additionally, the response array of decrypted values will be returned in the same order they were provided.",
+      "example": "track1"
+     },
+     "value": {
+      "type": "string",
+      "description": "Base64 or hex encoded encrypted data retrieved from device.",
+      "example": "EF77ABC20DE782C48A88FBF25C59A6C7E21FD7E42D9A1C091F5FC8BBC1BF7DA89E2D8DB1AEB58A7318A79DDE4E59A5E7BD682FCAE9F6BBFD"
+     }
+    }
+   },
+   "DecryptionParameters": {
+    "type": "object",
+    "properties": {
+     "sequenceNumber": {
+      "type": "string",
+      "description": "Sequence number obtained from device in base 64 or hex encoded format. This value is typically required for DUKPT encryption/decryption. This parameter is optional and not required if the device does not generate a key sequence number.",
+      "example": "629949960E001D200037"
+     },
+     "cbcVector": {
+      "type": "string",
+      "description": "Base64 or hex encoded initial vector obtained from device. This parameter is optional. It\u2019s used in devices that implement 3DES Cipher Block Chaining (CBC) encryption with non-zero initial vector.",
+      "example": ""
+     },
+     "encoding": {
+      "type": "string",
+      "description": "Encoding used for Encrypted Values and the Key Sequence Number. This defaults to base64 if not specified. The allowed values for this are \"base64\" and \"hex\". Hex encoded values should be an even number of characters from 0-F where each 2 characters represent one byte. Most devices provided the encrypted values and Key Sequence Number in this format. The format specified here will be the return format of the decrypted data.",
+      "example": "hex",
+      "default": "base64",
+      "enum": [
+       "base64",
+       "hex"
+      ]
+     }
+    }
+   },
+   "DecryptResponse": {
+    "required": [
+     "messageId",
+     "reference",
+     "success"
+    ],
+    "type": "object",
+    "properties": {
+     "success": {
+      "type": "boolean",
+      "description": "Indicates if the Decryption is successful or not."
+     },
+     "reference": {
+      "type": "string",
+      "description": "A string (of up to 50 characters) that helps partners identify individual API calls. If provided, the value will be logged to the P2PE Manager where it can be used to troubleshoot technical issues. It is highly recommended that a unique value be used on each Decryptx API call. The reference value will be returned in the response body, whether the API call is successful or not.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     },
+     "messageId": {
+      "type": "string",
+      "description": "Bluefin assigned unique identifier for each response from the Decryptx API. This can and should be stored for troubleshooting purposes. This will be 25 numeric characters.",
+      "example": "1201607010023571033712211"
+     },
+     "code": {
+      "type": "integer",
+      "description": "Pragmatic code for specific failure reasons. The list of possible values for this is provided later in this section.",
+      "format": "int32"
+     },
+     "message": {
+      "type": "string",
+      "description": "Human readable error message indicating why the call was unsuccessful."
+     },
+     "decrypted": {
+      "type": "array",
+      "items": {
+       "$ref": "#/components/schemas/Decrypted"
+      }
+     }
+    }
+   },
+   "Decrypted": {
+    "required": [
+     "name"
+    ],
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string",
+      "description": "String identifier for the value to be decrypted. This name will be returned in the response so that values can be matched up. Additionally, the response array of decrypted values will be returned in the same order they were provided.",
+      "example": "track1"
+     },
+     "value": {
+      "type": "string",
+      "description": "Base64 or hex encoded encrypted data retrieved from device.",
+      "example": "25423337303030303939393939393939305e544553542f424c554546494e5e323231323130313132333435363738393f2800000000000000"
+     },
+     "failed": {
+      "type": "boolean",
+      "description": "Indicates if the decryption was unsuccessful.",
+      "example": false
+     },
+     "code": {
+      "type": "string",
+      "description": "Failure code.",
+      "example": ""
+     },
+     "message": {
+      "type": "string",
+      "description": "Human readable reason for the failure.",
+      "example": ""
+     }
+    }
+   },
+   "DecryptExternalRequest": {
+    "required": [
+     "decrypted",
+     "encrypted",
+     "partnerId",
+     "reference",
+     "serial",
+     "success"
+    ],
+    "type": "object",
+    "properties": {
+     "reference": {
+      "type": "string",
+      "description": "Request Reference"
+     },
+     "partnerId": {
+      "type": "string",
+      "description": "Partner Id"
+     },
+     "partnerKey": {
+      "type": "string",
+      "description": "Partner Key"
+     },
+     "clientId": {
+      "type": "string",
+      "description": "Client Id"
+     },
+     "serial": {
+      "type": "string",
+      "description": "Serial Number"
+     },
+     "encrypted": {
+      "type": "number",
+      "description": "Number of encrypted items"
+     },
+     "decrypted": {
+      "type": "number",
+      "description": "Number of decrypted items"
+     },
+     "success": {
+      "type": "boolean",
+      "description": "Succes or failed decryption"
+     },
+     "ip": {
+      "type": "string",
+      "description": "IP Address"
+     },
+     "completed": {
+      "type": "string",
+      "description": "Completed datetime",
+      "format": "date-time"
+     }
+    },
+    "description": "Decrypt External Request"
+   },
+   "DecryptExternalResponse": {
+    "type": "object",
+    "properties": {
+     "success": {
+      "type": "boolean",
+      "description": "Mirroring Success"
+     },
+     "messageId": {
+      "type": "string",
+      "description": "Message Id"
+     },
+     "reference": {
+      "type": "string",
+      "description": "Mirroring Reference"
+     },
+     "decrypted": {
+      "type": "number",
+      "description": "Mirroring Decrypted"
+     }
+    },
+    "description": "Decrypt External Response"
+   },
+   "DecryptxError": {
+    "required": [
+     "errCode",
+     "errMessage",
+     "success"
+    ],
+    "type": "object",
+    "properties": {
+     "success": {
+      "type": "boolean",
+      "description": "True for successful API calls, false for failed.",
+      "example": false
+     },
+     "errCode": {
+      "type": "integer",
+      "description": "Pragmatic code for specific failure reason. The list of possible values for this is provided later in this section",
+      "format": "int32",
+      "example": 1003
+     },
+     "errMessage": {
+      "type": "string",
+      "description": "A human readable error message.",
+      "example": "Authentication required."
+     },
+     "messageId": {
+      "type": "string",
+      "description": "Numeric identifier generated by Decryptx API for each request. This will be unique for every response and should be recorded/logged for troubleshooting.",
+      "example": "1201607010023571033712211"
+     },
+     "reference": {
+      "type": "string",
+      "description": "If a reference value was provided in the request, it will be returned in the response.",
+      "example": "723f57e1-e9c8-48cb-81d9-547ad2b76435"
+     }
+    }
+   },
+   "ErrorResponse": {
+    "type": "object",
+    "properties": {
+     "success": {
+      "type": "boolean"
+     },
+     "messageId": {
+      "type": "string",
+      "description": "Message Id"
+     },
+     "errCode": {
+      "type": "number",
+      "description": "Error code"
+     },
+     "errMessage": {
+      "type": "string",
+      "description": "Error message"
+     }
+    },
+    "description": ""
+   }
+  },
+  "responses": {
+   "400": {
+    "description": "Bad request",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "401": {
+    "description": "Unauthorized",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "403": {
+    "description": "Forbidden",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "409": {
+    "description": "Invalid data",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   },
+   "500": {
+    "description": "Internal server error",
+    "content": {
+     "application/json": {
+      "schema": {
+       "$ref": "#/components/schemas/ErrorResponse"
+      }
+     }
+    }
+   }
+  },
+  "securitySchemes": {
+   "ApiKeyAuth": {
+    "type": "apiKey",
+    "name": "Authorization",
+    "in": "header"
+   }
+  }
+ },
+ "x-servers": [
+  {
+   "url": "//secure-prod.decryptx.com",
+   "description": "Certification server"
+  },
+  {
+   "url": "//secure-cert.decryptx.com",
+   "description": "Development server"
+  }
+ ],
+ "x-tagGroups": [
+  {
+   "name": "Decryptx APIs",
+   "tags": [
+    "Decryptx",
+    "Healthcheck"
+   ]
+  }
+ ],
+ "x-readme": {
+  "explorer-enabled": true,
+  "proxy-enabled": true
+ }
+}
