@@ -1,0 +1,32 @@
+# Guide
+
+guide: {
+  metrics: count: entity: 3
+  metrics: count: path: 5
+  metrics: count: method: 5
+
+  entity: decrypt: {
+    path: "/decrypt": {
+      op: create: method: *POST
+    }
+    path: "/healthcheck": {
+      op: list: method: *GET
+    }
+  }
+
+  entity: decrypt_ext: {
+    path: "/decrypt-ext": {
+      op: create: method: *POST
+    }
+  }
+
+  entity: validation: {
+    path: "/device/validate": {
+      op: create: method: *POST
+    }
+    path: "/partner/validate": {
+      op: create: method: *POST
+    }
+  }
+
+}

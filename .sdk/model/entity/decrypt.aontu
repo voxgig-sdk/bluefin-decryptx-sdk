@@ -1,0 +1,205 @@
+# Entity: decrypt
+
+main: kit: entity: decrypt: {
+
+  alias: field: {}
+
+  fields: [
+    {
+      name: "client_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "code"
+      req: false
+      type: "`$INTEGER`"
+    }
+    {
+      name: "decrypted"
+      req: false
+      type: "`$ARRAY`"
+    }
+    {
+      name: "decryption_parameter"
+      req: true
+      type: "`$OBJECT`"
+    }
+    {
+      name: "encrypted"
+      req: true
+      type: "`$ARRAY`"
+    }
+    {
+      name: "failed"
+      req: false
+      type: "`$BOOLEAN`"
+    }
+    {
+      name: "firmware"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "has_cc_data"
+      req: true
+      type: "`$BOOLEAN`"
+    }
+    {
+      name: "message"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "message_id"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "name"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_key"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "reference"
+      op: {
+        create: {
+          req: false
+          type: "`$STRING`"
+        }
+      }
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "serial"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "success"
+      req: true
+      type: "`$BOOLEAN`"
+    }
+    {
+      name: "value"
+      req: false
+      type: "`$STRING`"
+    }
+  ]
+
+  name: "decrypt"
+  op: {
+    create: {
+      name: "create"
+      points: [
+        {
+          method: "POST"
+          orig: "/decrypt"
+          parts: [
+            "decrypt"
+          ]
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+    list: {
+      name: "list"
+      points: [
+        {
+          args: {
+            query: [
+              {
+                kind: "query"
+                name: "client_id"
+                orig: "client_id"
+                reqd: false
+                type: "`$STRING`"
+              }
+              {
+                example: "param 1"
+                kind: "query"
+                name: "encrypted_name"
+                orig: "encrypted_name"
+                reqd: false
+                type: "`$STRING`"
+              }
+              {
+                example: "nlj/tULUuiMlM3io0JZ+9jFBTKH7KCPwVg7PFjvWUMzMa7XE/QbegA=="
+                kind: "query"
+                name: "encrypted_value"
+                orig: "encrypted_value"
+                reqd: false
+                type: "`$STRING`"
+              }
+              {
+                kind: "query"
+                name: "partner_id"
+                orig: "partner_id"
+                reqd: true
+                type: "`$STRING`"
+              }
+              {
+                kind: "query"
+                name: "partner_key"
+                orig: "partner_key"
+                reqd: true
+                type: "`$STRING`"
+              }
+              {
+                kind: "query"
+                name: "reference"
+                orig: "reference"
+                reqd: false
+                type: "`$STRING`"
+              }
+              {
+                kind: "query"
+                name: "serial"
+                orig: "serial"
+                reqd: true
+                type: "`$STRING`"
+              }
+            ]
+          }
+          method: "GET"
+          orig: "/healthcheck"
+          parts: [
+            "healthcheck"
+          ]
+          select: {
+            exist: [
+              "client_id"
+              "encrypted_name"
+              "encrypted_value"
+              "partner_id"
+              "partner_key"
+              "reference"
+              "serial"
+            ]
+          }
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

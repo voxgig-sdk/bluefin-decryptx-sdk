@@ -1,0 +1,30 @@
+# BasicDecryptFlow
+
+main: kit: flow: BasicDecryptFlow:
+{
+  entity: "decrypt",
+  kind: "basic",
+  name: "BasicDecryptFlow",
+  step: [
+    {
+      input: {
+        ref: "decrypt_ref01"
+      }
+
+      op: "create"
+    }
+
+    {
+      op: "list",
+      valid: [
+        {
+          apply: "ItemExists",
+          def: {
+            ref: "decrypt_ref01"
+          }
+        }
+      ]
+    }
+  ],
+  "key$": "BasicDecryptFlow"
+}

@@ -1,0 +1,45 @@
+# API Information
+
+
+main: {
+  kit: {
+    info: {
+      contact: {
+        name: "support@bluefin.com"
+      }
+      description: `This page describes the Bluefin Partner Application Programming Interface (API) for the Decryptx service. This service allows partners to decrypt PCI-validated Point-To-Point Encryption (P2PE) card information.
+
+<strong>IP Address Whitelist</strong><br/>
+At Bluefin, we protect our REST endpoints with a IP address whitelist. If you would like to try the examples below please <a href="https://www.bluefin.com/contact/">contact us</a> to request access.
+
+# Authentication
+All API calls to the Decryptx APIs require authentication; our endpoints support Transparent, Basic, Digest, HMAC, and RSA authentication methods. To explore our authentication methods check out our Authentication documentation.
+`
+      license: {
+        name: "Bluefin Software Licence"
+      }
+      security: {
+        in: "header"
+        name: "Authorization"
+        prefix: ""
+        scheme: "ApiKeyAuth"
+        type: "apiKey"
+      }
+      servers: [
+        {
+          description: "Production"
+          url: "https://secure-prod.decryptx.com/api"
+        }
+        {
+          description: "Certification"
+          url: "https://secure-cert.decryptx.com/api"
+        }
+      ]
+      summary: "This page describes the Bluefin Partner Application Programming Interface (API) for the Decryptx service."
+      title: "Decryptx APIs"
+      version: "1.3.0"
+      website: "https://secure-prod.decryptx.com"
+    }
+  }
+}
+

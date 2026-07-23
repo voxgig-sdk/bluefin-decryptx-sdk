@@ -1,0 +1,114 @@
+-- Typed models for the BluefinDecryptx SDK (LuaLS annotations).
+--
+-- GENERATED from the API model: main.kit.entity.<e>.fields[] and per-op
+-- params (op.<name>.points[].args.params[]). Field/param types come from the
+-- canonical type sentinels via @voxgig/sdkgen canonToType (source of truth:
+-- @voxgig/apidef VALID_CANON). Annotations only — no runtime effect. Do not
+-- edit by hand.
+
+---@class Decrypt
+---@field client_id? string
+---@field code? number
+---@field decrypted? table
+---@field decryption_parameter table
+---@field encrypted table
+---@field failed? boolean
+---@field firmware? string
+---@field has_cc_data boolean
+---@field message? string
+---@field message_id string
+---@field name string
+---@field partner_id? string
+---@field partner_key? string
+---@field reference string
+---@field serial string
+---@field success boolean
+---@field value? string
+
+---@class DecryptListMatch
+---@field client_id? string
+---@field code? number
+---@field decrypted? table
+---@field decryption_parameter? table
+---@field encrypted? table
+---@field failed? boolean
+---@field firmware? string
+---@field has_cc_data? boolean
+---@field message? string
+---@field message_id? string
+---@field name? string
+---@field partner_id? string
+---@field partner_key? string
+---@field reference? string
+---@field serial? string
+---@field success? boolean
+---@field value? string
+
+---@class DecryptCreateData
+---@field client_id? string
+---@field code? number
+---@field decrypted? table
+---@field decryption_parameter table
+---@field encrypted table
+---@field failed? boolean
+---@field firmware? string
+---@field has_cc_data boolean
+---@field message? string
+---@field message_id string
+---@field name string
+---@field partner_id? string
+---@field partner_key? string
+---@field reference string
+---@field serial string
+---@field success boolean
+---@field value? string
+
+---@class DecryptExt
+---@field client_id? string
+---@field completed? string
+---@field decrypted? number
+---@field encrypted number
+---@field ip? string
+---@field message_id? string
+---@field partner_id string
+---@field partner_key? string
+---@field reference? string
+---@field serial string
+---@field success? boolean
+
+---@class DecryptExtCreateData
+---@field client_id? string
+---@field completed? string
+---@field decrypted? number
+---@field encrypted number
+---@field ip? string
+---@field message_id? string
+---@field partner_id string
+---@field partner_key? string
+---@field reference? string
+---@field serial string
+---@field success? boolean
+
+---@class Validation
+---@field client_id? string
+---@field firmware? string
+---@field message_id string
+---@field partner_id? string
+---@field partner_key? string
+---@field reference string
+---@field serial string
+---@field success boolean
+
+---@class ValidationCreateData
+---@field client_id? string
+---@field firmware? string
+---@field message_id string
+---@field partner_id? string
+---@field partner_key? string
+---@field reference string
+---@field serial string
+---@field success boolean
+
+local M = {}
+
+return M

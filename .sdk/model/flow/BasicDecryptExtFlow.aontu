@@ -1,0 +1,18 @@
+# BasicDecryptExtFlow
+
+main: kit: flow: BasicDecryptExtFlow:
+{
+  entity: "decrypt_ext",
+  kind: "basic",
+  name: "BasicDecryptExtFlow",
+  step: [
+    {
+      input: {
+        ref: "decrypt_ext_ref01"
+      }
+
+      op: "create"
+    }
+  ],
+  "key$": "BasicDecryptExtFlow"
+}

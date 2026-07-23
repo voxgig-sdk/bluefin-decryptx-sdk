@@ -1,0 +1,91 @@
+# Entity: validation
+
+main: kit: entity: validation: {
+
+  alias: field: {}
+
+  fields: [
+    {
+      name: "client_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "firmware"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "message_id"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_key"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "reference"
+      op: {
+        create: {
+          req: false
+          type: "`$STRING`"
+        }
+      }
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "serial"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "success"
+      req: true
+      type: "`$BOOLEAN`"
+    }
+  ]
+
+  name: "validation"
+  op: {
+    create: {
+      name: "create"
+      points: [
+        {
+          method: "POST"
+          orig: "/device/validate"
+          parts: [
+            "device"
+            "validate"
+          ]
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+        {
+          method: "POST"
+          orig: "/partner/validate"
+          parts: [
+            "partner"
+            "validate"
+          ]
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

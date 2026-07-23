@@ -1,0 +1,89 @@
+{
+  "existing": {
+    "decrypt": {
+      "DECRYPT00": {
+        "client_id": "CLIENT01",
+        "code": "sab",
+        "decrypted": [],
+        "decryption_parameter": {},
+        "encrypted": [],
+        "failed": false,
+        "firmware": "sb0",
+        "has_cc_data": false,
+        "message": "sb2",
+        "message_id": "MESSAGE01",
+        "name": "sb4",
+        "partner_id": "PARTNER01",
+        "partner_key": "sb6",
+        "reference": "sb7",
+        "serial": "sb8",
+        "success": false,
+        "value": "sba",
+        "id": "DECRYPT00"
+      },
+      "DECRYPT01": {
+        "client_id": "CLIENT01",
+        "code": "s155",
+        "decrypted": [],
+        "decryption_parameter": {},
+        "encrypted": [],
+        "failed": false,
+        "firmware": "s15a",
+        "has_cc_data": false,
+        "message": "s15c",
+        "message_id": "MESSAGE01",
+        "name": "s15e",
+        "partner_id": "PARTNER01",
+        "partner_key": "s160",
+        "reference": "s161",
+        "serial": "s162",
+        "success": false,
+        "value": "s164",
+        "id": "DECRYPT01"
+      },
+      "DECRYPT02": {
+        "client_id": "CLIENT01",
+        "code": "s1ff",
+        "decrypted": [],
+        "decryption_parameter": {},
+        "encrypted": [],
+        "failed": false,
+        "firmware": "s204",
+        "has_cc_data": false,
+        "message": "s206",
+        "message_id": "MESSAGE01",
+        "name": "s208",
+        "partner_id": "PARTNER01",
+        "partner_key": "s20a",
+        "reference": "s20b",
+        "serial": "s20c",
+        "success": false,
+        "value": "s20e",
+        "id": "DECRYPT02"
+      }
+    }
+  },
+  "new": {
+    "decrypt": {
+      "decrypt_ref01": {
+        "client_id": "CLIENT01",
+        "code": "s2a9",
+        "decrypted": [],
+        "decryption_parameter": {},
+        "encrypted": [],
+        "failed": false,
+        "firmware": "s2ae",
+        "has_cc_data": false,
+        "message": "s2b0",
+        "message_id": "MESSAGE01",
+        "name": "s2b2",
+        "partner_id": "PARTNER01",
+        "partner_key": "s2b4",
+        "reference": "s2b5",
+        "serial": "s2b6",
+        "success": false,
+        "value": "s2b8"
+      }
+    }
+  }
+}

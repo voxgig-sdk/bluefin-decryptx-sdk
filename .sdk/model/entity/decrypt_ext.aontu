@@ -1,0 +1,105 @@
+# Entity: decrypt_ext
+
+main: kit: entity: decrypt_ext: {
+
+  alias: field: {}
+
+  fields: [
+    {
+      name: "client_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "completed"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "decrypted"
+      op: {
+        create: {
+          req: true
+          type: "`$NUMBER`"
+        }
+      }
+      req: false
+      type: "`$NUMBER`"
+    }
+    {
+      name: "encrypted"
+      req: true
+      type: "`$NUMBER`"
+    }
+    {
+      name: "ip"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "message_id"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_id"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "partner_key"
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "reference"
+      op: {
+        create: {
+          req: true
+          type: "`$STRING`"
+        }
+      }
+      req: false
+      type: "`$STRING`"
+    }
+    {
+      name: "serial"
+      req: true
+      type: "`$STRING`"
+    }
+    {
+      name: "success"
+      op: {
+        create: {
+          req: true
+          type: "`$BOOLEAN`"
+        }
+      }
+      req: false
+      type: "`$BOOLEAN`"
+    }
+  ]
+
+  name: "decrypt_ext"
+  op: {
+    create: {
+      name: "create"
+      points: [
+        {
+          method: "POST"
+          orig: "/decrypt-ext"
+          parts: [
+            "decrypt-ext"
+          ]
+          transform: {
+            req: "`reqdata`"
+            res: "`body`"
+          }
+        }
+      ]
+    }
+  }
+
+
+
+}

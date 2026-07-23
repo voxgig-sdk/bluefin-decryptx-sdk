@@ -1,0 +1,53 @@
+{
+  "existing": {
+    "validation": {
+      "VALIDATION00": {
+        "client_id": "CLIENT01",
+        "firmware": "s51",
+        "message_id": "MESSAGE01",
+        "partner_id": "PARTNER01",
+        "partner_key": "s54",
+        "reference": "s55",
+        "serial": "s56",
+        "success": false,
+        "id": "VALIDATION00"
+      },
+      "VALIDATION01": {
+        "client_id": "CLIENT01",
+        "firmware": "sa1",
+        "message_id": "MESSAGE01",
+        "partner_id": "PARTNER01",
+        "partner_key": "sa4",
+        "reference": "sa5",
+        "serial": "sa6",
+        "success": false,
+        "id": "VALIDATION01"
+      },
+      "VALIDATION02": {
+        "client_id": "CLIENT01",
+        "firmware": "sf1",
+        "message_id": "MESSAGE01",
+        "partner_id": "PARTNER01",
+        "partner_key": "sf4",
+        "reference": "sf5",
+        "serial": "sf6",
+        "success": false,
+        "id": "VALIDATION02"
+      }
+    }
+  },
+  "new": {
+    "validation": {
+      "validation_ref01": {
+        "client_id": "CLIENT01",
+        "firmware": "s141",
+        "message_id": "MESSAGE01",
+        "partner_id": "PARTNER01",
+        "partner_key": "s144",
+        "reference": "s145",
+        "serial": "s146",
+        "success": false
+      }
+    }
+  }
+}
